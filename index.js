@@ -1,9 +1,5 @@
 const { Plugin } = require("powercord/entities");
-const {
-	React,
-	getModule,
-	FluxDispatcher,
-} = require("powercord/webpack");
+const { React, getModule, FluxDispatcher } = require("powercord/webpack");
 const { inject, uninject } = require("powercord/injector");
 const { ListThin } = getModule(["ListThin"], false);
 const { requestMembers } = getModule(["requestMembers"], false);
@@ -58,11 +54,13 @@ module.exports = class MessageTranslate extends Plugin {
 					let total = guild.memberCount;
 					let online = guild.groups
 						.map((group) => {
-							return group.count;
+							return group.id != "offline" ? group.count : 0;
 						})
 						.reduce((a, b) => {
 							return a + b;
 						}, 0);
+
+					console.log(guild.groups);
 
 					cache[id] = { total, online };
 
