@@ -14,32 +14,35 @@ class TotalMembers extends React.Component {
 		};
 
 		this.props.counts.then((counts) => {
-			this.setState({ total: counts.total, online: counts.online });
+			this.setState({
+				total: counts.total == 0 ? this.state.total : counts.total,
+				online: counts.online,
+			});
 		});
 	}
 
 	render() {
 		return (
-			<div className={`total-members-count-box ${classes.membersGroup}`}>
-				<div className={`${classes.statusCounts}`}>
-					<div className="total-members-count">
-						<i
-							className={`${classes.status} ${classes.statusOffline}`}
-						></i>
-						<span className={`${classes.count}`}>
-							{this.state.total} Members
-						</span>
-					</div>
-					<div className="total-members-count">
-						<i
-							className={`${classes.status} ${classes.statusOnline}`}
-						></i>
-						<span className={`${classes.count}`}>
-							{this.state.online
-								? `${this.state.online} Online`
-								: "Loading..."}
-						</span>
-					</div>
+			<div className={`total-members-count-box`}>
+				<div className={`total-members-count ${classes.statusCounts}`}>
+					<i
+						className={`${classes.status} ${classes.statusOffline}`}
+					></i>
+					<span className={`${classes.count}`}>
+						{this.state.total.toLocaleString(undefined)} Members
+					</span>
+				</div>
+				<div className={`total-members-count ${classes.statusCounts}`}>
+					<i
+						className={`${classes.status} ${classes.statusOnline}`}
+					></i>
+					<span className={`${classes.count}`}>
+						{this.state.online
+							? `${this.state.online.toLocaleString(
+									undefined
+							  )} Online`
+							: "Loading..."}
+					</span>
 				</div>
 			</div>
 		);

@@ -1,15 +1,24 @@
-.total-members-count-box > div {
-	display: grid;
-	grid-template-rows: 50% 50%;
+.total-members-count-box {
+	/* Untill I can move it out of the members list, it will stick to the top. */
+	position: sticky;
+	top: 0;
+	z-index: 1;
 
-	justify-items: center;
+	padding-top: 16px;
+	padding-bottom: 0px;
+	padding-left: 16px;
+	padding-right: 8px;
+
+	font-size: 16px;
+	font-weight: 600;
+
+	display: grid;
 	align-items: center;
+	justify-content: center;
 }
 
 .total-members-count {
-	display: grid;
-	grid-template-columns: 5% 95%;
-
-	justify-items: center;
+	display: flex;
 	align-items: center;
+	justify-content: center;
 }
