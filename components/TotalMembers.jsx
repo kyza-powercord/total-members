@@ -1,7 +1,4 @@
-const {
-	React,
-	getModule,
-} = require("powercord/webpack");
+const { React, getModule } = require("powercord/webpack");
 const classes = {
 	...getModule(["membersGroup"], false),
 	...getModule(["statusOnline"], false),
@@ -13,7 +10,7 @@ class TotalMembers extends React.Component {
 
 		this.state = {
 			total: this.props.total,
-			online: this.props.cached ? this.props.cached.online : 0,
+			online: this.props.cached ? this.props.cached.online : null,
 		};
 
 		this.props.counts.then((counts) => {
@@ -38,7 +35,9 @@ class TotalMembers extends React.Component {
 							className={`${classes.status} ${classes.statusOnline}`}
 						></i>
 						<span className={`${classes.count}`}>
-							{this.state.online} Online
+							{this.state.online
+								? `${this.state.online} Online`
+								: "Loading..."}
 						</span>
 					</div>
 				</div>
