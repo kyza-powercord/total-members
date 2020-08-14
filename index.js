@@ -60,8 +60,6 @@ module.exports = class MessageTranslate extends Plugin {
 							return a + b;
 						}, 0);
 
-					console.log(guild.groups);
-
 					cache[id] = { total, online };
 
 					FluxDispatcher.unsubscribe(
