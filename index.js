@@ -1,11 +1,17 @@
 const { Plugin } = require("powercord/entities");
-const { React, getModule } = require("powercord/webpack");
-const { findInReactTree } = require("powercord/util");
+const {
+	React,
+	getModule,
+	FluxDispatcher,
+} = require("powercord/webpack");
 const { inject, uninject } = require("powercord/injector");
 const { ListThin } = getModule(["ListThin"], false);
+const { requestMembers } = getModule(["requestMembers"], false);
 const { getLastSelectedGuildId } = getModule(["getLastSelectedGuildId"], false);
 const { getMemberCount } = getModule(["getMemberCount"], false);
 const TotalMembers = require("./components/TotalMembers");
+
+let cache = {};
 
 module.exports = class MessageTranslate extends Plugin {
 	async startPlugin() {
@@ -23,18 +29,18 @@ module.exports = class MessageTranslate extends Plugin {
 				)
 					return reactElement;
 
-				const list = findInReactTree(
-					reactElement,
-					(el) =>
-						el && el.className && el.className.startsWith("content")
-				);
-
-				const count = getMemberCount(getLastSelectedGuildId());
-				list.children.splice(
-					1,
-					0,
-					React.createElement(TotalMembers, { count })
-				);
+				const id = getLastSelectedGuildId();
+				const total = getMemberCount(id);
+				reactElement.props.children = [
+					React.createElement(TotalMembers, {
+						total,
+						counts: (async () => {
+							return await this.getMemberCounts(id);
+						})(),
+						cached: cache[id],
+					}),
+					reactElement.props.children,
+				];
 
 				return reactElement;
 			}
@@ -43,5 +49,35 @@ module.exports = class MessageTranslate extends Plugin {
 
 	pluginWillUnload() {
 		uninject("total-members-members-list");
+	}
+
+	getMemberCounts(id) {
+		return new Promise((resolve, reject) => {
+			function onMembers(guild) {
+				if (guild.guildId == id) {
+					let total = guild.memberCount;
+					let online = guild.groups
+						.map((group) => {
+							return group.count;
+						})
+						.reduce((a, b) => {
+							return a + b;
+						}, 0);
+
+					cache[id] = { total, online };
+
+					FluxDispatcher.unsubscribe(
+						"GUILD_MEMBER_LIST_UPDATE",
+						onMembers
+					);
+					resolve({
+						total,
+						online,
+					});
+				}
+			}
+			FluxDispatcher.subscribe("GUILD_MEMBER_LIST_UPDATE", onMembers);
+			requestMembers(id);
+		});
 	}
 };

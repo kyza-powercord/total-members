@@ -1,3 +1,15 @@
+.total-members-count-box > div {
+	display: grid;
+	grid-template-rows: 50% 50%;
+
+	justify-items: center;
+	align-items: center;
+}
+
 .total-members-count {
-	text-align: center;
+	display: grid;
+	grid-template-columns: 5% 95%;
+
+	justify-items: center;
+	align-items: center;
 }
