@@ -28,21 +28,23 @@ class TotalMembers extends React.Component {
 					<i
 						className={`${classes.status} ${classes.statusOffline}`}
 					></i>
+					<span className={`${classes.count} total-members-count-number`}>
+						{this.state.total.toLocaleString(undefined)}
+					</span>
 					<span className={`${classes.count}`}>
-						{this.state.total.toLocaleString(undefined)} Members
+						Members
 					</span>
 				</div>
 				<div className={`total-members-count ${classes.statusCounts}`}>
 					<i
 						className={`${classes.status} ${classes.statusOnline}`}
 					></i>
-					<span className={`${classes.count}`}>
+					<span className={`${classes.count} total-members-count-number`}>
 						{this.state.online
-							? `${this.state.online.toLocaleString(
-									undefined
-							  )} Online`
+							? `${this.state.online.toLocaleString(undefined)}`
 							: "Loading..."}
 					</span>
+					<span className={`${classes.count}`}>{this.state.online && `Online`}</span>
 				</div>
 			</div>
 		);
