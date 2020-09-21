@@ -1,11 +1,17 @@
+.total-members-group-box,
 .total-members-count-box {
-	/* Untill I can move it out of the members list, it will stick to the top. */
 	position: sticky;
 	top: 0;
 	z-index: 1;
+}
 
+.total-members-group-box {
+	padding-bottom: 24px;
+}
+
+.total-members-count-box {
 	padding-top: 16px;
-	padding-bottom: 0px;
+	padding-bottom: 16px;
 	padding-left: 16px;
 	padding-right: 8px;
 
@@ -17,8 +23,17 @@
 	justify-content: center;
 }
 
-.total-members-count {
+.total-members-count-box .total-members-count {
 	display: flex;
 	align-items: center;
 	justify-content: center;
+}
+
+.total-members-group-box ~ div > [class*="membersGroup-"]:nth-of-type(3) {
+	padding-top: 0px !important;
+	height: 24px;
+}
+.total-members-count-box ~ div > [class*="membersGroup-"]:first-of-type {
+	padding-top: 0px !important;
+	height: 24px;
 }

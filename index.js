@@ -1,17 +1,41 @@
 const { Plugin } = require("powercord/entities");
-const { React, getModule, FluxDispatcher } = require("powercord/webpack");
 const { inject, uninject } = require("powercord/injector");
-const { ListThin } = getModule(["ListThin"], false);
-const { requestMembers } = getModule(["requestMembers"], false);
-const { getLastSelectedGuildId } = getModule(["getLastSelectedGuildId"], false);
-const { getMemberCount } = getModule(["getMemberCount"], false);
-const TotalMembers = require("./components/TotalMembers");
+const { forceUpdateElement } = require("powercord/util");
+
+const {
+	Webpack: {
+		FindModule,
+		CommonModules: { React, FluxDispatcher },
+	},
+	Tools: { DOMTools },
+} = KLibrary;
+
+const { ListThin } = FindModule.byProps("ListThin");
+const { requestMembers } = FindModule.byProps("requestMembers");
+const { getLastSelectedGuildId } = FindModule.byProps("getLastSelectedGuildId");
+const { getMemberCount } = FindModule.byProps("getMemberCount");
+
+const Settings = require("./components/Settings");
+const TotalMembersElement = require("./components/TotalMembersElement");
 
 let cache = {};
 
-module.exports = class MessageTranslate extends Plugin {
+module.exports = class TotalMembers extends Plugin {
 	async startPlugin() {
 		this.loadStylesheet("style.scss");
+
+		this.Settings = new KLibrary.Settings(this.entityID);
+
+		powercord.api.settings.registerSettings(this.entityID, {
+			category: this.entityID,
+			label: "Total Members",
+			render: () =>
+				React.createElement(Settings, {
+					cache,
+					Settings: this.Settings,
+					getMemberCounts: this.getMemberCounts,
+				}),
+		});
 
 		inject(
 			"total-members-members-list",
@@ -28,7 +52,8 @@ module.exports = class MessageTranslate extends Plugin {
 				const id = getLastSelectedGuildId();
 				const total = getMemberCount(id);
 				reactElement.props.children = [
-					React.createElement(TotalMembers, {
+					React.createElement(TotalMembersElement, {
+						Settings: this.Settings,
 						total,
 						counts: (async () => {
 							return await this.getMemberCounts(id);
@@ -41,10 +66,22 @@ module.exports = class MessageTranslate extends Plugin {
 				return reactElement;
 			}
 		);
+
+		this.forceUpdateMembersList();
 	}
 
 	pluginWillUnload() {
+		powercord.api.settings.unregisterSettings(this.entityID);
 		uninject("total-members-members-list");
+		this.forceUpdateMembersList();
+	}
+
+	forceUpdateMembersList() {
+		forceUpdateElement(
+			DOMTools.classNamesToSelectors(
+				FindModule.classes("membersWrap").membersWrap
+			)
+		);
 	}
 
 	getMemberCounts(id) {
