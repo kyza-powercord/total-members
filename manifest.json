@@ -3,6 +3,5 @@
 	"description": "Shows a counter of the total amount of members in a server on the members list.",
 	"author": "Куzа#1794",
 	"version": "1.2.0",
-	"license": "MIT",
 	"dependencies": ["0klibrary"]
 }
