@@ -35,7 +35,7 @@ class Settings extends React.Component {
 					onChange={(event) => {
 						this.setSetting(
 							"useMembersGroupStyle",
-							event.target.checked
+							!this.getSetting("useMembersGroupStyle")
 						);
 					}}
 					note=""
